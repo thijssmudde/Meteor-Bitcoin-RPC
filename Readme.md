@@ -1,6 +1,10 @@
 # Bitcoin RPC commands for Meteor
 
 Wrapper for RPC commands used for communicating with Bitcoin or Altcoin wallets.
+```
+meteor add fullhdpixel:bitcoin
+```
+
 
 ## Requirements
 

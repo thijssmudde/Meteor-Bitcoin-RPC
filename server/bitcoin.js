@@ -1,25 +1,30 @@
 Meteor.startup(function() {
     coind = Npm.require('node-coind');
-    
+
     var site = Meteor.absoluteUrl();
     var local = site.indexOf('localhost') != -1;
 
-    if (local) {
-        var localConfig = Meteor.settings.local;
-        client = new coind.Client({
-            host: localConfig.host,
-            port: localConfig.port,
-            user: localConfig.user,
-            pass: localConfig.pass
-        });
+    var config = Meteor.settings;
+
+    if (!config) {
+        console.log('Meteor.settings cannot be accessed. Please run meteor run --settings settings.json')
+        return;
     } else {
-        var productionConfig = Meteor.settings.production;
-        client = new coind.Client({
-            host: productionConfig.host,
-            port: productionConfig.port,
-            user: productionConfig.user,
-            pass: productionConfig.pass
-        });
+        if (local) {
+            client = new coind.Client({
+                host: config.local.host,
+                port: config.local.port,
+                user: config.local.user,
+                pass: config.local.pass
+            });
+        } else {
+            client = new coind.Client({
+                host: config.production.host,
+                port: config.production.port,
+                user: config.production.user,
+                pass: config.production.pass
+            });
+        }
     }
 });
 
