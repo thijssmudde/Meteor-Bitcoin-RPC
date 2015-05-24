@@ -8,13 +8,13 @@ meteor add fullhdpixel:bitcoin
 
 ## Requirements
 
-1. Create an settings.json file in your Meteor project.
+1- Create an settings.json file in your Meteor project.
 
 ```
 meteor run --settings settings.json
 ```
 
-2. In your settings.json file fill in the following credentials for your RPC:
+2- In your settings.json file fill in the following credentials for your RPC:
 
 ```
 {
