@@ -8,7 +8,13 @@ meteor add fullhdpixel:bitcoin
 
 ## Requirements
 
-In your settings.json file, which you can create by running <i>meteor run --settings settings.json</i>, fill in the following credentials for your RPC:
+1. Create an settings.json file in your Meteor project.
+
+```
+meteor run --settings settings.json
+```
+
+2. In your settings.json file fill in the following credentials for your RPC:
 
 ```
 {
@@ -60,16 +66,18 @@ validateAddress(address);
 listTransactions(account, amount)
 ```
 
+
 ## Example with (simple:reactive-method)
 
 ```javascript
 Template.templateName.helpers({
     balance: function(account) {
+        var account = Meteor.userId();
         var result = ReactiveMethod.call('getBalanceFromAddress', account);
         return result;
     },
+    //Get transaction for all accounts
     transactions: function() {
-        var account = Meteor.userId();
         var transactions = ReactiveMethod.call('listTransactions', '*', 25);
         return transactions;
     }
