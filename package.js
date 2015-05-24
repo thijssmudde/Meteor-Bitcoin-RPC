@@ -1,7 +1,7 @@
 Package.describe({
     name: 'fullhdpixel:bitcoin',
     summary: 'Wrapper for RPC commands used for communicating with Bitcoin or Altcoin wallets',
-    version: '0.0.3',
+    version: '0.0.4',
     git: 'https://fullhdpixel@bitbucket.org/fullhdpixel/bitcoin-rpc-commands.git'
 });
 

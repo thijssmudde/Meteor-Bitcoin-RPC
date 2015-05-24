@@ -6,24 +6,22 @@ Meteor.startup(function() {
 
     var config = Meteor.settings;
 
-    if (config && (config.local || config.production)) {
-        if (local) {
-            client = new coind.Client({
-                host: config.local.host,
-                port: config.local.port,
-                user: config.local.user,
-                pass: config.local.pass
-            });
-        } else {
-            client = new coind.Client({
-                host: config.production.host,
-                port: config.production.port,
-                user: config.production.user,
-                pass: config.production.pass
-            });
-        }
+    if (local && config.local) {
+        client = new coind.Client({
+            host: config.local.host,
+            port: config.local.port,
+            user: config.local.user,
+            pass: config.local.pass
+        });
+    } else if (!local && config.production) {
+        client = new coind.Client({
+            host: config.production.host,
+            port: config.production.port,
+            user: config.production.user,
+            pass: config.production.pass
+        });
     } else {
-        console.log('Meteor.settings cannot be accessed. Please run meteor run --settings settings.json')
+        console.log('Fullhdpixel:bitcoin Meteor.settings cannot be accessed. Please run "meteor run --settings settings.json"')
         return;
     }
 });
