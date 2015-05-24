@@ -31,13 +31,6 @@ meteor run --settings settings.json
         "pass": "pass"
     }
 }
-
-## Deployment
-
-Once you are ready to deploy your application, you could use Meteor Up. It has support for settings.json.
-
-https://github.com/arunoda/meteor-up
-
 ```
 
 ## The following commands are supported
@@ -90,3 +83,10 @@ Template.templateName.helpers({
     }
 });
 ```
+
+## Deployment
+
+Once you are ready to deploy your application, you could use Meteor Up. It has support for settings.json.
+
+https://github.com/arunoda/meteor-up
+
