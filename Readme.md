@@ -1,6 +1,6 @@
 # Bitcoin RPC commands for Meteor
 
-Wrapper for RPC commands used for communicating with Bitcoin or Altcoin wallets.
+Wrapper for RPC commands used for communicating with Bitcoin or altcoin wallets.
 ```
 meteor add fullhdpixel:bitcoin
 ```
@@ -8,7 +8,7 @@ meteor add fullhdpixel:bitcoin
 
 ## Requirements
 
-1- Create an settings.json file in your Meteor project.
+1- Create a settings.json file in your Meteor project.
 
 ```
 meteor run --settings settings.json
