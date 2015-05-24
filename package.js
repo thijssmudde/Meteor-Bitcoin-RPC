@@ -8,7 +8,7 @@ Package.describe({
 Package.onUse(function(api) {
     // Atmosphere Package Dependencies
     api.use([
-    	'meteorhacks:async'
+    	'meteorhacks:async@1.0.0'
     ]);
 
     Npm.depends({
