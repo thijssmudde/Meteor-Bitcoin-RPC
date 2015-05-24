@@ -6,10 +6,7 @@ Meteor.startup(function() {
 
     var config = Meteor.settings;
 
-    if (!config) {
-        console.log('Meteor.settings cannot be accessed. Please run meteor run --settings settings.json')
-        return;
-    } else {
+    if (config && (config.local || config.production)) {
         if (local) {
             client = new coind.Client({
                 host: config.local.host,
@@ -25,6 +22,9 @@ Meteor.startup(function() {
                 pass: config.production.pass
             });
         }
+    } else {
+        console.log('Meteor.settings cannot be accessed. Please run meteor run --settings settings.json')
+        return;
     }
 });
 
