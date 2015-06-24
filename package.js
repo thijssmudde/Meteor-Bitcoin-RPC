@@ -1,20 +1,16 @@
 Package.describe({
     name: 'fullhdpixel:bitcoin',
     summary: 'Wrapper for RPC commands used for communicating with Bitcoin or Altcoin wallets',
-    version: '0.0.5',
-    git: 'https://fullhdpixel@bitbucket.org/fullhdpixel/bitcoin-rpc-commands.git'
+    version: '0.1.0',
+    git: 'https://github.com/fullhdpixel/Meteor-Bitcoin-RPC'
 });
 
 Package.onUse(function(api) {
-    // Atmosphere Package Dependencies
-    api.use([
-    	'meteorhacks:async@1.0.0'
-    ]);
-
     Npm.depends({
         "node-coind": "1.0.1"
     });
 
-    api.addFiles('packages.json');
-    api.addFiles(['server/bitcoin.js'], 'server');
+    api.addFiles('exampleMethods.js');
+    api.addFiles('server/bitcoin.js', 'server');
+    api.export('Bitcoin', 'server');
 });

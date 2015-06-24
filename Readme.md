@@ -1,20 +1,20 @@
 # Bitcoin RPC commands for Meteor
 
-Wrapper for RPC commands used for communicating with Bitcoin or altcoin wallets.
+Wrapper for RPC commands used for communicating with Bitcoin wallet software. This is exclusively a server side package.
+
 ```
 meteor add fullhdpixel:bitcoin
 ```
 
-
 ## Requirements
 
-1- Create a settings.json file in your Meteor project.
+1- Create a settings.json file in the root of your Meteor project.
 
 ```
 meteor run --settings settings.json
 ```
 
-2- In your settings.json file fill in the following credentials for your RPC:
+2- In your settings.json file fill in the credentials for your RPC's:
 
 ```
 {
@@ -33,41 +33,46 @@ meteor run --settings settings.json
 }
 ```
 
-## The following commands are supported
+## The following methods are supported
 ```javascript
-setAccount(address, userid);
+Bitcoin.setAccount(address, userid);
 ``` 
 
 ```javascript
-getDeposited(account);
+Bitcoin.getDeposited(account);
 ```
 
 ```javascript
-getWithdrawn(account);
+Bitcoin.getWithdrawn(account);
 ```
 
 ```javascript
-getBalanceFromAddress(account);
+Bitcoin.getBalanceFromAddress(account);
 ```
 
 ```javascript
-getNewAddress(userid);
+Bitcoin.getNewAddress(userid);
 ```
 
 ```javascript
-sendFrom(account, address, amount, [token]);
+Bitcoin.sendFrom(account, address, amount);
 ```
 
 ```javascript
-validateAddress(address);
+Bitcoin.validateAddress(address);
 ```
 
 ```javascript
-listTransactions(account, amount)
+Bitcoin.listTransactions(account, amount)
 ```
 
+## Own methods
 
-## Example with (simple:reactive-method)
+You have to create your own methods in order to do the accounting part.
+
+See exampleMethods.js for examples. You need the meteorhacks:async package to support the asynchronous nature of all these functions.
+
+Then you can do the following on the client (install the simple:reactive-method package)
 
 ```javascript
 Template.templateName.helpers({
@@ -76,7 +81,7 @@ Template.templateName.helpers({
         var result = ReactiveMethod.call('getBalanceFromAddress', account);
         return result;
     },
-    //Get transaction for all accounts
+    //Get the latest x transactions for all accounts
     transactions: function() {
         var transactions = ReactiveMethod.call('listTransactions', '*', 25);
         return transactions;
@@ -89,4 +94,3 @@ Template.templateName.helpers({
 Once you are ready to deploy your application, you could use Meteor Up. It has support for settings.json.
 
 https://github.com/arunoda/meteor-up
-

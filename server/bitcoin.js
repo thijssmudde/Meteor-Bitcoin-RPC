@@ -1,107 +1,49 @@
-Meteor.startup(function() {
-    coind = Npm.require('node-coind');
+Bitcoin = {};
 
+Meteor.startup(function() {
     var site = Meteor.absoluteUrl();
     var local = site.indexOf('localhost') != -1;
 
     var config = Meteor.settings;
 
     if (local && config.local) {
-        client = new coind.Client({
-            host: config.local.host,
-            port: config.local.port,
-            user: config.local.user,
-            pass: config.local.pass
-        });
+        var host = config.local.host;
+        var port = config.local.port;
+        var user = config.local.user;
+        var pass = config.local.pass;
     } else if (!local && config.production) {
-        client = new coind.Client({
-            host: config.production.host,
-            port: config.production.port,
-            user: config.production.user,
-            pass: config.production.pass
-        });
+        var host = config.production.host;
+        var port = config.production.port;
+        var user = config.production.user;
+        var pass = config.production.pass;
     } else {
-        console.log('Fullhdpixel:bitcoin Meteor.settings cannot be accessed. Please run "meteor run --settings settings.json"')
+        console.log('Fullhdpixel:bitcoin Meteor.settings cannot be accessed. Please run "meteor run --settings settings.json"');
         return;
     }
+
+    var connection = Bitcoin.connect(host, port, user, pass);
+    return Boolean(connection);
 });
 
-var setaccount = Async.wrap(setAccount);
-var deposited = Async.wrap(getDeposited);
-var withdrawn = Async.wrap(getWithdrawn);
-var balanceaddress = Async.wrap(getBalanceFromAddress);
-var newaddress = Async.wrap(getNewAddress);
-var sendnow = Async.wrap(sendFrom);
-var validate = Async.wrap(validateAddress);
-var transactions = Async.wrap(listTransactions);
+/** Documentation needs work but nobody gives a shit anyway.
+ * @param host host
+ * @param port portnumber
+ * @param user username
+ * @param pass password for the RPC
+ * @return coin client status;
+ **/
+Bitcoin.connect = function(host, port, user, pass) {
+    var coind = Npm.require('node-coind');
+    var client = new coind.Client({
+        host: config.local.host,
+        port: config.local.port,
+        user: config.local.user,
+        pass: config.local.pass
+    });
+    return (client);
+}
 
-Meteor.methods({
-    'setAccount': function(address, userid) {
-        return setaccount(address, userid);
-    },
-    'getDeposited': function(account) {
-        return deposited(account);
-    },
-    'getWithdrawn': function(account) {
-        return withdrawn(account);
-    },
-    'getBalanceFromAddress': function(account) {
-        return balanceaddress(account);
-    },
-    'getNewAddress': function(userid) {
-        var address = newaddress(userid);
-
-        Meteor.users.update({
-            _id: userid
-        }, {
-            $set: {
-                publickey: address
-            }
-        });
-
-        return address;
-    },
-    'sendFrom': function(account, address, amount, token) {
-        var getuser = Meteor.users.findOne({
-            _id: account
-        });
-        try {
-            if (getuser.hasOwnProperty(auth)) {
-                var authtoken = getuser.auth;
-            }
-        } catch (e) {
-            authtoken = '';
-        }
-
-        if (authtoken && authtoken !== '') {
-
-            if (!verifyOtp(authtoken, key)) {
-                throw new Meteor.Error(406, 'Security code is invalid');
-            }
-        } else {
-            var user = Meteor.user();
-            var result = Accounts._checkPassword(user, token);
-            if (result.error) {
-                throw new Meteor.Error(406, result.error.reason);
-            }
-        }
-        var balance = balanceaddress(account);
-
-        if (amount > balance) {
-            throw new Meteor.Error(406, 'Balance is not sufficient');
-        }
-
-        return sendnow(account, address, amount);
-    },
-    'validateAddress': function(address) {
-        return validate(address);
-    },
-    'listTransactions': function(account, amount) {
-        return transactions(account, amount);
-    }
-});
-
-function setAccount(address, userid, callback) {
+Bitcoin.setAccount = function(address, userid, callback) {
     client.cmd('setaccount', address, userid, function(error, result) {
         if (error) {
             throw new Meteor.Error(406, 'Account could not be set');
@@ -113,7 +55,7 @@ function setAccount(address, userid, callback) {
     });
 }
 
-function getDeposited(account, callback) {
+Bitcoin.getDeposited = function(account, callback) {
     client.cmd('listtransactions', account, 100000, function(error, transactions) {
         var deposited = 0;
 
@@ -128,7 +70,7 @@ function getDeposited(account, callback) {
     });
 }
 
-function getWithdrawn(account, callback) {
+Bitcoin.getWithdrawn = function(account, callback) {
     client.cmd('listtransactions', account, 100000, function(error, transactions) {
         var withdrawed = 0;
 
@@ -143,7 +85,7 @@ function getWithdrawn(account, callback) {
     });
 }
 
-function getBalanceFromAddress(account, callback) {
+Bitcoin.getBalanceFromAddress = function(account, callback) {
     client.cmd('listtransactions', account, 100000, function(error, transactions) {
         var deposited = 0;
         var withdrawed = 0;
@@ -162,7 +104,7 @@ function getBalanceFromAddress(account, callback) {
     });
 }
 
-function getNewAddress(account, callback) {
+Bitcoin.getNewAddress = function(account, callback) {
     client.cmd('getnewaddress', account, function(error, address) {
         if (error) {
             throw new Meteor.Error(406, 'Account could not be set (1)');
@@ -182,7 +124,7 @@ function getNewAddress(account, callback) {
     });
 }
 
-function sendFrom(account, address, amount, callback) {
+Bitcoin.sendFrom = function(account, address, amount, callback) {
     var amount = parseFloat(amount);
     client.cmd('sendfrom', account, address, amount, function(error, result) {
         if (error) {
@@ -193,15 +135,16 @@ function sendFrom(account, address, amount, callback) {
     });
 }
 
-function validateAddress(address, callback) {
+Bitcoin.validateAddress = function(address, callback) {
     client.cmd('validateaddress', address, function(error, valid) {
         try {
             callback(null, valid.isvalid);
         } catch (e) {}
     });
+
 }
 
-function listTransactions(account, amount, callback) {
+Bitcoin.listTransactions = function(account, amount, callback) {
     client.cmd('listtransactions', account, amount, function(error, result) {
         try {
             callback(null, result);
